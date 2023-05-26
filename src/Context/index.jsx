@@ -4,7 +4,31 @@ import { apiUrl } from "../api";
 
 export const ShoppingCartContext = createContext();
 
+export const initializeLocalStorage = () => {
+  const accountInLocalStorage = localStorage.getItem('account')
+  const signOutInLocalStorage = localStorage.getItem('sign-out')
+  let parsedAccount
+  let parsedSignOut
+
+  if (!accountInLocalStorage) {
+    localStorage.setItem('account', JSON.stringify({}))
+    parsedAccount = {}
+  } else {
+    parsedAccount = JSON.parse(accountInLocalStorage)
+  }
+
+  if(!signOutInLocalStorage) {
+    localStorage.setItem('sign-ou', JSON.stringify(false))
+    parsedSignOut = false
+  } else {
+    parsedSignOut = JSON.parse(signOutInLocalStorage)
+  }
+}
+
 export const ShoppingCartProvider = ({ children }) => {
+  const [account, setAccount] = useState({});
+  const [signOut, setSignOut] = useState(false);
+
   const [items, setItems] = useState(null);
   const [filteredItems, setFilteredItems] = useState(null);
   const [isProductDetailOpen, setIsProductDetailOpen] = useState(false);
@@ -68,6 +92,8 @@ export const ShoppingCartProvider = ({ children }) => {
 
   return (
     <ShoppingCartContext.Provider value={{
+      account,
+      signOut,
       items,
       filteredItems,
       isProductDetailOpen,
@@ -77,6 +103,8 @@ export const ShoppingCartProvider = ({ children }) => {
       order,
       searchByTitle,
       searchByCategory,
+      setAccount,
+      setSignOut,
       setItems,
       setProductInfo,
       setCartProducts,
