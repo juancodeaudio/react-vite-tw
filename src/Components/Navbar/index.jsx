@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 import { useContext } from "react";
 
-import { ShoppingBagIcon } from '@heroicons/react/24/solid'
+import ShoppingCart from "../ShoppingCart";
 import { ShoppingCartContext } from "../../Context";
 
 
@@ -13,6 +13,13 @@ const Navbar = () => {
   const parsedSignOut = JSON.parse(signOut)
   const isUserSignOut = context.signOut || parsedSignOut
 
+  const account = localStorage.getItem('account')
+  const parsedAccount = JSON.parse(account)
+
+  const noAccountInLocalStorage = parsedAccount ? Object.keys(parsedAccount).length === 0 : true
+  const noAccountInLocalState = context.account ? Object.keys(context.account).length === 0 : true
+  const hasUserAnAccount = !noAccountInLocalStorage || !noAccountInLocalState
+
   const handleSignOut = () => {
     const stringifiedSignOut = JSON.stringify(true)
     localStorage.setItem('sign-out', stringifiedSignOut)
@@ -20,7 +27,7 @@ const Navbar = () => {
   }
 
   const renderView = () => {
-    if (isUserSignOut) {
+    if (!hasUserAnAccount && isUserSignOut) {
       return (
         <li>
           <NavLink 
@@ -73,11 +80,12 @@ const Navbar = () => {
       )
     }
   }
+
   return (
     <nav className="flex justify-between items-center fixed z-10 top-0 w-full py-5 px-8 text-sm font-light">
       <ul className="flex items-center gap-3">
         <li className="font-semibold text-lg">
-          <NavLink to='/' onClick={() => context.setSearchByCategory()}>
+          <NavLink to={`${isUserSignOut ? '/sign-in' : '/'}`} onClick={() => context.setSearchByCategory()}>
             Shopi
           </NavLink>
         </li>
@@ -144,9 +152,8 @@ const Navbar = () => {
       </ul>
       <ul className="flex items-center gap-3">
         {renderView()}
-        <li onClick={context.openCheckoutSideMenu} className="flex items-center cursor-pointer">
-          <ShoppingBagIcon className="h-6 w-6 text-black" /> 
-          <div>{context.cartProducts.length}</div>
+        <li className="flex items-center">
+          <ShoppingCart />
         </li>
       </ul>
     </nav>
