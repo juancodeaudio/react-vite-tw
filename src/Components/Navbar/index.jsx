@@ -27,25 +27,11 @@ const Navbar = () => {
   }
 
   const renderView = () => {
-    if (!hasUserAnAccount && isUserSignOut) {
-      return (
-        <li>
-          <NavLink 
-            to='/sign-in'
-            className={({ isActive }) => 
-            isActive ? activeStyle : undefined  
-            }
-            onClick={handleSignOut}
-          >
-            Sign In
-          </NavLink>
-        </li>
-      )
-    } else {
+    if (hasUserAnAccount && !isUserSignOut) {
       return (
         <>
           <li className="text-black/60">
-          juancodeaudio@platzi.com
+          {parsedAccount?.email}
         </li>
         <li>
           <NavLink 
@@ -78,11 +64,22 @@ const Navbar = () => {
         </li>
         </>
       )
+    } else {
+      return (
+        <li>
+          <NavLink
+            to="/sign-in"
+            className={({ isActive }) => isActive ? activeStyle : undefined }
+            onClick={() => handleSignOut()}>
+            Sign in
+          </NavLink>
+        </li>
+      )
     }
   }
 
   return (
-    <nav className="flex justify-between items-center fixed z-10 top-0 w-full py-5 px-8 text-sm font-light">
+    <nav className="flex justify-between items-center fixed z-10 top-0 w-full py-5 px-8 text-sm font-light bg-white/60 backdrop-blur-md">
       <ul className="flex items-center gap-3">
         <li className="font-semibold text-lg">
           <NavLink to={`${isUserSignOut ? '/sign-in' : '/'}`} onClick={() => context.setSearchByCategory()}>
